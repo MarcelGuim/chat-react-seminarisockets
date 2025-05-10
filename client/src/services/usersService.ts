@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { User } from '../types/types';
+
 // Fetch all users
+
 export const fetchUsers = async (): Promise<User[]> => {
     try {
         const response = await axios.get<User[]>('http://localhost:9000/api/users');

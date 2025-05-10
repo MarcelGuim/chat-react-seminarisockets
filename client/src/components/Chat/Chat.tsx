@@ -32,10 +32,40 @@ const Chat: React.FC = () => {
       },
     });
 
+
+
+    socketRef.current.emit('user_login', user.name);
+
+
+
+    
     socketRef.current.on('receive_message', (data: ChatMessage) => {
       console.log('Mensaje recibido:', data);
       setMessageList(prev => [...prev, data]);
     });
+
+
+
+
+    socketRef.current.on('user_login', (userName: String) => {
+      if (Notification.permission === 'granted') {
+        new Notification('Nou usuari', {
+          body: 'New user logged in: ' + userName,
+        });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('Nou usuari', {
+              body: 'New user logged in: ' + userName,
+            });
+          }
+        });
+      }
+    });
+
+
+
+
 
     socketRef.current.on('status', (data) => {
       console.debug('Estado recibido:', data);
@@ -70,7 +100,7 @@ const Chat: React.FC = () => {
         message: currentMessage,
         time: new Date().toLocaleTimeString(),
       };
-
+      console.log("1");
       await socketRef.current?.emit('send_message', messageData);
       setMessageList(prev => [...prev, messageData]);
       setCurrentMessage('');

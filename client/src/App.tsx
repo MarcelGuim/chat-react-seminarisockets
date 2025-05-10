@@ -6,6 +6,8 @@ import {Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { User } from './types/types';
 import Login from './components/Login/Login';
 import { LogIn } from './services/usersService';
+import { io, Socket } from 'socket.io-client';
+
 
 interface AppState {
   currentUser: User | null;
@@ -23,7 +25,7 @@ interface LoginResponse {
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<AppState['isLoggedIn']>(false);
   const [currentUser, setCurrentUser] = useState<AppState['currentUser']>(null);
-  
+  const socketRef = useRef<Socket | null>(null);
 
   const navigate = useNavigate();
 
@@ -45,6 +47,7 @@ const handleLogin = async (email: string, password: string) => {
 
       setCurrentUser(response.user); // Actualiza el estado con el usuario
       setIsLoggedIn(true);
+
   } catch (error) {
       console.error('Login failed:', error);
       alert('Login failed. Please check your credentials.');
